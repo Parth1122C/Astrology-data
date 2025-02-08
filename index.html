@@ -3,57 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birth Information Form</title>
+    <title>Dusane Astrology and Palmistry</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
             padding: 20px;
-            max-width: 500px;
-            margin: auto;
+            background-color: #f4f4f4;
         }
         form {
+            max-width: 400px;
+            margin: auto;
             padding: 20px;
-            border: 1px solid #ccc;
+            background: white;
             border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
         }
         label {
             display: block;
             margin-top: 10px;
+            font-weight: bold;
         }
-        input, button {
+        input, select, button {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
             margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
         }
     </style>
 </head>
 <body>
-    <h2>Birth Information Form</h2>
 
-    <form action="https://formsubmit.co/parthdusane@gmail.com" method="POST" enctype="multipart/form-data">
-        <label>Full Name:</label>
-        <input type="text" name="name" required>
+    <form id="astroForm">
+        <h2>Dusane Astrology and Palmistry</h2>
 
-        <label>Date of Birth:</label>
-        <input type="date" name="dob" required>
+        <label for="name">Full Name:</label>
+        <input type="text" id="name" name="name" required>
 
-        <label>Birth Time:</label>
-        <input type="time" name="birth_time" required>
+        <label for="phone">WhatsApp Number:</label>
+        <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required placeholder="Enter 10-digit number">
 
-        <label>Birth Place:</label>
-        <input type="text" name="birth_place" required>
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
 
-        <label>Upload Photos of Your Hands:</label>
-        <input type="file" name="hand_photos" accept="image/*" multiple required>
+        <label for="birth_time">Birth Time:</label>
+        <input type="time" id="birth_time" name="birth_time" required>
 
-        <!-- Redirect to a thank you page -->
-        <input type="hidden" name="_next" value="https://yourwebsite.com/thank-you.html">
+        <label for="birth_place">Birth Place:</label>
+        <input type="text" id="birth_place" name="birth_place" required>
 
-        <!-- Optional: Enable CAPTCHA to prevent spam -->
-        <input type="hidden" name="_captcha" value="true">
+        <label for="right_hand_photos">Upload 3 Photos of Your Right Hand:</label>
+        <input type="file" id="right_hand_photos" name="right_hand_photos" accept="image/*" multiple required>
 
-        <button type="submit">Submit</button>
+        <label for="left_hand_photos">Upload 3 Photos of Your Left Hand:</label>
+        <input type="file" id="left_hand_photos" name="left_hand_photos" accept="image/*" multiple required>
+
+        <label for="service">Select a Service:</label>
+        <select id="service" name="service" required onchange="updatePaymentLink()">
+            <option value="Match Making - Rs100">Match Making - Rs100</option>
+            <option value="Palm Reading - Rs500">Palm Reading - Rs500</option>
+            <option value="Palm + Kundali - Rs1100">Palm + Kundali - Rs1100</option>
+        </select>
+
+        <p id="paymentInfo"></p>
+        
+        <button type="button" onclick="sendToWhatsApp()">Submit & Pay</button>
     </form>
+
+    <script>
+        function updatePaymentLink() {
+            let service = document.getElementById("service").value;
+            let paymentInfo = document.getElementById("paymentInfo");
+            let upiId = "9970054204@ybl"; // Replace with your actual UPI ID
+
+            let amount;
+            if (service.includes("100")) amount = 100;
+            else if (service.includes("500")) amount = 500;
+            else if (service.includes("1100")) amount = 1100;
+
+            paymentInfo.innerHTML = 
+                `<strong>Pay Rs.${amount} using UPI:</strong><br>
+                <a href="upi://pay?pa=${upiId}&pn=DusaneAstrology&mc=&tid=&tr=&tn=AstrologyService&am=${amount}&cu=INR" target="_blank">
+                Click here to Pay</a>`;
+        }
+
+        function sendToWhatsApp() {
+            let name = document.getElementById("name").value;
+            let phone = document.getElementById("phone").value;
+            let dob = document.getElementById("dob").value;
+            let birthTime = document.getElementById("birth_time").value;
+            let birthPlace = document.getElementById("birth_place").value;
+            let service = document.getElementById("service").value;
+
+            let message = `Hello, I want to book a service.\n\n` +
+                          `Name: ${name}\n` +
+                          `WhatsApp: ${phone}\n` +
+                          `Date of Birth: ${dob}\n` +
+                          `Birth Time: ${birthTime}\n` +
+                          `Birth Place: ${birthPlace}\n` +
+                          `Selected Service: ${service}\n\n` +
+                          `I have made the payment. Please confirm.`;
+
+            let whatsappURL = `https://wa.me/919970054204?text=${encodeURIComponent(message)}`;
+            window.open(whatsappURL, "_blank");
+        }
+    </script>
+
 </body>
 </html>
